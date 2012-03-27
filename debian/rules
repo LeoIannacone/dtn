@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+
+%:
+	#dh $@ --with python2
+	dh $@ --with autoreconf	
+	
+override_dh_autoreconf:
+	bash build-configure.sh
+
+override_dh_auto_clean:
+	rm -f configure-stamp build-stamp
+	$(MAKE) distclean || echo "nothing to clean"
+
+override_dh_auto_build:
+	PERL_MM_OPT="INSTALLDIRS=vendor" $(MAKE)
+
+override_dh_auto_install:
+	$(MAKE) DESTDIR=$(CURDIR)/debian/dtn/ install
+	$(MAKE) DESTDIR=$(CURDIR)/debian/python-dtn/ -C applib pythonapi_install
+
+override_dh_shlibdeps:
+	dh_shlibdeps "-l$(CURDIR)/debian/dtn/usr/lib" 
+
+override_dh_usrlocal:
+	# Fix build fails on perl module installation

@@ -1,0 +1,67 @@
+#!/bin/sh
+
+test $DEBIAN_SCRIPT_DEBUG && set -v -x
+
+DO_WHAT=$1
+VERSION=$2
+
+set -e
+
+case "$DO_WHAT" in
+  configure)
+    echo "Creating dtn user..."
+    adduser --system dtn || true
+
+    echo "Fixing ownership and permissions on /var/dtn..."
+    # Create a dir needed by dtnperf
+    mkdir -p /var/dtn/dtnperf || true
+    chown -R dtn   /var/dtn
+    chmod -R o-wrx /var/dtn
+    chmod -R g-w   /var/dtn
+    chmod -R g+rX  /var/dtn
+    chmod -R u+wrX /var/dtn
+
+    initdb=y
+    if [ ! $VERSION = "" ] ; then
+      echo "Checking for old persistent data store..."
+      find /var/dtn -type f > /dev/null 2>/dev/null
+      if [ $? = 0 ] ; then
+        echo
+        echo "DTN data is still kept in /var/dtn. If you are "
+        echo "upgrading to a new major release, the databases "
+        echo "may not be compatible and the new daemon will fail "
+        echo "to run. "
+        echo ""
+        echo "To avoid problem, please consider to remove old"
+        echo "database running command:"
+        echo "    rm -rf /var/dtn/db"
+        echo "    rm -rf /var/dtn/bundles"
+        echo ""
+        echo "And then initialize a new database with command:"
+        echo "    dtnd --init-db"
+        echo ""
+        initdb=n
+      fi
+    fi
+    
+    if [ $initdb = y ] ; then
+      echo "Initializing DTN persistent data store..."
+      su -s /bin/sh -c "dtnd --init-db || true" dtn
+    fi
+
+#    rm -f /var/log/dtnd.log || true
+    ln -s /var/dtn/dtnd.log /var/log/dtnd.log || true
+  ;;
+
+  abort-upgrade|abort-remove|abort-deconfigure)
+  ;;
+
+  *)
+    echo "postinst called with unknown argument \`$1'" >&2
+    exit 1
+  ;;
+esac
+
+#DEBHELPER#
+
+exit 0

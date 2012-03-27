@@ -1,0 +1,35 @@
+Source: dtn
+Section: net
+Priority: optional
+Maintainer: Leo Iannacone <l3on@ubuntu.com>
+Build-Depends: debhelper (>= 7.0.50),
+               dh-autoreconf,
+               libdb-dev,
+               liboasys-dev,
+               libxerces-c2-dev,
+               python-all-dev (>= 2.6.6-3~),
+               python-support,
+               tcl-dev
+Standards-Version: 3.9.3
+Homepage: http://www.dtnrg.org
+Vcs-Hg: http://dtn.hg.sourceforge.net/hgweb/dtn/DTN2
+Vcs-Browser: http://dtn.hg.sourceforge.net/hgweb/dtn/DTN2
+
+Package: dtn
+Architecture: any
+Suggests: tclreadline
+Depends: liboasys, ${misc:Depends}, ${perl:Depends}, ${shlibs:Depends}
+Description: delay tolerant networking reference implementation
+ This package contains the reference implementation of the Delay
+ Tolerant Networking (DTN) architecture. This includes the DTN daemon
+ (dtnd) as well as several example applications that use the DTN
+ protocols.
+
+Package: python-dtn
+Depends: ${misc:Depends}, ${python:Depends}, ${shlibs:Depends}
+Section: python
+Provides: ${python:Provides}
+Architecture: any
+Description: dtn2 python api
+ This package contains python bindings for applications to use the DTN
+ reference implementation.

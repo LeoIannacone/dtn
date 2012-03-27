@@ -1,0 +1,36 @@
+--- a/applib/APIServer.cc
++++ b/applib/APIServer.cc
+@@ -1537,8 +1537,7 @@
+         }
+         
+     } else if (location == DTN_PAYLOAD_FILE) {
+-        const char *tdir;
+-        char templ[64];
++        char *tdir, templ[64];
+         
+         tdir = getenv("TMP");
+         if (tdir == NULL) {
+@@ -1586,8 +1585,21 @@
+             sr_data.orig_creation_tv_.seconds_;
+         status_report.bundle_id.creation_ts.seqno =
+             sr_data.orig_creation_tv_.seqno_;
+-        status_report.bundle_id.frag_offset = sr_data.orig_frag_offset_;
+-        status_report.bundle_id.orig_length = sr_data.orig_frag_length_;
++
++   	    //Marco Livini Bug Fix ...Start
++  	
++	      //status_report.bundle_id.frag_offset = sr_data.orig_frag_offset_;
++   	    //status_report.bundle_id.orig_length = sr_data.orig_frag_length_;
++
++	      if (sr_data.admin_flags_ & BundleProtocol::ADMIN_IS_FRAGMENT){
++        	status_report.bundle_id.frag_offset = sr_data.orig_frag_offset_;
++        	status_report.bundle_id.orig_length = sr_data.orig_frag_length_;
++  	    }
++        else {
++        	status_report.bundle_id.frag_offset = 0;
++        	status_report.bundle_id.orig_length = 0;
++  	    }
++	      //Marco Livini Bug Fix ...End
+ 
+         status_report.reason = (dtn_status_report_reason_t)sr_data.reason_code_;
+         status_report.flags =  (dtn_status_report_flags_t)sr_data.status_flags_;

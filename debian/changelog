@@ -1,0 +1,134 @@
+dtn (2.8.0+hg3548-1) unstable; urgency=low
+
+  * Update source at mercurial revision 3548
+  * Bump standards.
+  * Build with autoreconf.
+  * New patch to fix a wrong set dbdir in dtn.conf.
+
+ -- Leo Iannacone <l3on@ubuntu.com>  Tue, 27 Mar 2012 17:47:48 +0200
+
+dtn (2.8.0+hg3525-1) unstable; urgency=low
+
+  * Update source at mercurial revision 3525
+
+ -- Leo Iannacone <l3on@ubuntu.com>  Sat, 26 Nov 2011 19:27:21 +0100
+
+dtn (2.8.0+hg3524-1) unstable; urgency=low
+
+  * Update source at mercurial revision 3524
+  
+  * debian/control:
+    - removed version dependeces from tcl-dev, libdb-dev, libexerces-cs2-dev
+    - update standard version
+    - added Vcs fields
+    - update debhelper version
+    - added homepage field
+    - removed original maintainer
+    - added ${misc:Depends}, ${perl:Depends} at Depends field in binary packages
+    - added ${shlibs:Depends}, ${python:Depends} at python-dtn Depends field
+    - removed Homepage from descriptions
+    - typos in descriptions
+    - changed Architecture from 'all' to 'any' in python-dtn
+
+  * debian/rules:
+    - update at 3.0 format
+    - fixed prolem during dh_auto_clean
+    - fixed path install overrinding dh_auto_install
+    - fixed perl path install overrinding dh_auto_build
+
+  * debian/patches:
+    - removed patches about dtnperf (now in upstream)
+    - update fix-fragment-offset-dtn.patch
+    
+  * debian/dtn.init.d:
+    - add force-reload
+
+  * debian/dtn.postinst:
+    - removed read-in-maintainer-script problem
+
+  * Added debian/copyright
+
+  * Removed debian/README.debian
+
+  * Removed control.in
+
+ -- Leo Iannacone <l3on@ubuntu.com>  Fri, 11 Nov 2011 20:30:03 +0100
+
+dtn (2.7.0+hg3496-1) stable; urgency=low
+
+  * Update source at mercurial revision 3496
+
+  * Applying fix-fragment-offset-dtn.patch in order to fix fragment offset
+  * Applying fix-rename-fail-dtnperf-server.patch to fix rename files fail in 
+    dtnperf-server when files are not in the same filesystem
+  * Applying fix-filename-parsing-dtnperf-client.patch to improve
+    the dtnperf-client send file option
+
+  * Running ./build-configure to recreate configuration scripts (Bug:
+    #2998095)
+
+  * Added debian/format 3.0 (quilt)
+  * Fix blank char in debian/dtn.postrm
+  * Fix test fail in debian/dtn.postinst
+
+  * debian/rules:
+    - added dh_makeshlibs at binary_arch
+
+  * debian/control:
+    - replaced '[]' in '<>' at maintainer email
+    - added python-dev as Build-Depends instead of python*-dev
+    - added python-support as Build-Depends
+    - added debhelper (>= 5) as Build-Depends
+    - added tcl, Berkeley db and Xerces libriaries as Build-Depends
+    - added liboasys as Depends [#FIX_ME#]
+    - added Standards-Version 3.9.0
+
+ -- Leo Iannacone <l3on@ubuntu.com>  Fri, 01 Oct 2010 21:18:49 +0200
+
+dtn (2.7.0+hg3492-1) stable; urgency=low
+
+  * Update: hg version 3492
+
+ -- Leo Iannacone <l3on@ubuntu.com>  Thu, 15 Jul 2010 19:09:03 +0200
+
+dtn (2.7.0) unstable; urgency=low
+
+  * 2.7.0 release upgrade
+
+ -- Alex McMahon <ailex.mcmahon@cs.tcd.ie>  Fri, 08 May 2009 20:07:09 +0100
+
+dtn (2.6.0) unstable; urgency=low
+
+  * 2.6.0 release upgrade
+
+ -- Alex McMahon <ailex.mcmahon@cs.tcd.ie>  Fri, 08 May 2009 20:07:09 +0100
+
+dtn (2.5.1-1) unstable; urgency=low
+
+  * 2.5.1 release update
+
+ -- Michael Demmer <demmer@cs.berkeley.edu>  Wed,  5 Mar 2008 15:31:47 -0800
+
+dtn (2.5.0-1) unstable; urgency=low
+
+  * 2.5.0 release update
+
+ -- Michael Demmer <demmer@cs.berkeley.edu>  Fri, 19 Oct 2007 11:52:23 -0700
+
+dtn (2.4.0-1) unstable; urgency=low
+
+  * Updated version of the package
+
+ -- Michael Demmer <demmer@cs.berkeley.edu>  Wed, 11 Jul 2007 00:39:03 -0700
+
+dtn (2.3.0-1) unstable; urgency=low
+
+  * Updated version of the package
+
+ -- Michael Demmer <demmer@cs.berkeley.edu>  Mon, 18 Dec 2006 13:00:31 -0800
+
+dtn (2.2.0-1) unstable; urgency=low
+
+  * Initial version of a debian package
+
+ -- Michael Demmer <demmer@cs.berkeley.edu>  Tue, 14 Mar 2006 15:02:24 -0800

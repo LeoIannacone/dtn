@@ -1,0 +1,13 @@
+Description: Wrong commit in hg repository
+
+--- a/daemon/dtn.conf
++++ b/daemon/dtn.conf
+@@ -83,8 +83,6 @@
+     exit 1
+ }
+ 
+-set dbdir /home/user/workspace/hg_10_10_11/dbdir
+-
+ #
+ # storage set payloaddir <dir>
+ #
