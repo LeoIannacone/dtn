@@ -1,0 +1,94 @@
+<html>
+<head>
+<title> DTN2 Manual: UDP Convergence Layer </title>
+<link rel="stylesheet" type="text/css" href="manual.css" />
+</head>
+<body>
+<h1>UDP Convergence Layer
+</h1>
+
+<p>
+The UDP Convergence Layer connects DTN nodes via a UDP channel.
+A UDP channel is unreliable, but the the DTN protocols overcome
+this and attempt to achieve reliable delivery of bundles
+over the unreliable UDP channel.
+
+<p>
+A UDP datagram is limited in size to 65507 bytes. The UDP convergence
+layer adds a header of variable size (but almost always less than 1000 bytes)
+to every datagram.
+Because bundles are sent inside of a single UDP datagram, that
+means that bundles which exceed about 64000 bytes cannot be
+transmitted or received with the UDP convergence layer.
+
+<p>
+Because the underlying datalink protocol (often Ethernet) rarely
+supports the full size of the maximum UDP datagram, is will be broken
+into fragments and reassembled at the far end. This process, like the
+UDP protocol itself, has no provisions for retransmissions. As a
+result, over a sufficiently lossy link UDP datgrams large enough
+to trigger IP fragmentation may end up with a successful transmission
+rate of 0. As a result, the practical upper limit for the size of bundles
+sent via the UDP Convergence Layer is nearer to 2 to 3 times the
+Maximum Transmission Unit (MTU) of the underlying medium. For
+Ethernet, the MTU is 1500 bytes.
+
+<h2> Interfaces and Links  </h2>
+
+<p> Each UDP link needs to be configured on both sides. On one side,
+it is configured as a passive listener (called an <b>interface</b>
+by dtnd), and on the other side as an active session initiator (called
+a <b>link</b>).
+
+<h3>Passive Listener</h3>
+
+<p> The <tt>interface add</tt> command creates the passive
+listener side of the session. 
+
+<h3> Active Initiator</h3>
+
+<p> The <tt>link add</tt> command creates an object in the system that
+is capable of sending bundles outbound to other DTN nodes.
+Depending on the state of the link, as managed by the various options
+to the <tt>link</tt> command, it may or may not actually be 
+in use to forward bundles at a given time.
+
+<h2>Options</h2>
+
+<p>These options can appear after the <tt>link add</tt> command,
+or after the <tt>interface add</tt> command.
+
+<p>
+<table>
+
+<tr><th>Name<th>Type<th>Default<th>Comment
+
+<tr>
+<td>local_addr<td>IP address or a DNS hostname<td>0.0.0.0
+(interface), -1 (link)
+<td>In the case of an interface, this is the IP address that the
+server will listen on. In the case of a link, the default
+ensures that the operating system choses the appropriate source
+address for the connection before it is initiated.
+
+<tr>
+<td>local_port<td>IP port number<td>4556 (interface), 0 (link)
+<td>In the case of an interface, this is the UDP port that the
+server will listen on. In the case of a link, changing this
+setting from the default of 0 instructs the operating system to
+use the given port. In general, it is better to allow the OS to
+choose the source port itself.
+
+<tr>
+<td>remote_addr<td>IP address or a DNS hostname<td><i>No default.</i>
+<td>The IP address to which this link will send datagrams.
+
+<tr>
+<td>remote_port<td>IP port number<td><i>No default.</i>
+<td>The UDP port to which this link will send datagrams.
+
+</table>
+
+</body>
+</html>
+

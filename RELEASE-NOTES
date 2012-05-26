@@ -1,0 +1,434 @@
+Release Notes for DTN2
+----------------------
+
+2.8.0 (August 2011)
+-----------------
+
+- Added the ability for the DTN2 router component to modify locally-generated bundles before
+  they are delivered to local registrations (destination applications that use the same DTN2
+  daemon as the sender).
+
+- Added support for transactionalized access to the DTN2 database used to store metadata
+  (bundle headers and application registration information).
+
+- Added support for ODBC databases as a peer to the other database types provided with
+  the base open-source distribution (e.g. file-based, BerkeleyDB).
+
+- Added support for flexible and efficient synchronization to disk, allowing the
+  implementation to run in ACI (atomicity, consistency, isolation) mode with
+  synchronization to disk (ACID mode) with every Nth transaction.
+
+- For the ODBC database implementation, added support for loading external (non-DTN2)
+  schema for on database initialization.
+
+- Ensured that all required data structures are in fact synchronized to disk.
+
+- Added the ability for applications to acknowledge receipt of bundles to the DTN2 stack.
+
+- Added support for a class of DTN router-private (or any DTN component-private) event types.
+
+- Augmented the DTN2 application registration mechanism to allow applications to provide their
+  own unique token on registration (to support applications with no local storage).
+
+- Modified the oasys locking and debugging infrastructure to allow non-oasys threads to take
+  locks without hanging the debugging machinery.
+
+- Added support for nested event processing.
+
+- Changed DTN2's DAEMON_SHUTDOWN event to NOT be a daemon-only event.
+
+- Fixed a bug in the bundle find functions to prevent problems searching for bundles that are in
+  the process of being deleted.
+
+- Fixed a bug in the bundle metadata processing to ensure that metadata blocks for locally-
+  generated bundles are correctly restored when the DTN2 daemon is restarted.
+
+- Fixed a bug in the DTN2 IP Discovery module that was setting the socket options incorrectly 
+  (more specifically, setting the correct option for the wrong socket) and generating copious 
+  warnings in the log file.
+
+- miscellaneous bug fixes
+
+- dtnd-control augmentations for query of dtnd
+
+- Support for the age extension block draft-irtf-dtnrg-bundle-age-block-01
+
+- Logging changes from the N4C summer 2010 trials. Facilitates tracing a bundle across multiple 
+  nodes without debug logging by providing bundle creation time. 
+
+- IPN naming scheme support
+
+- Compressed Bundle Header Encoding (CBHE) support
+
+- Update file/class/internal names to BSP draft
+
+- Addition of AX.25 Connected Mode CL and the SeqpacketConvergenceLayer abstraction. 
+
+
+2.7.0 (February 2010)
+-----------------
+
+- Additions and updates to the DTN2 documentation (Please
+  see DTN2/doc/manual/index.html). Documentation and examples provided
+  for configuration file and command line options, arguments and syntax
+  for routing protocols and algorithms, storage back ends, CLAs, link,
+  interface, discovery, logging and debug parameters.
+
+- Additions and updates to the tcl commands for link, storage, bundle, route,
+  discovery, and interface to provide detail on available options
+  and arguments and syntax when help is requested.
+
+- Various other minor updates and bugfixes including Ubuntu 9.10
+  (karmic) compatibility and compensate for lack of "hyper" type in xdr.
+
+- Change of build to stop creation of oasys-->../oasys symlinks which
+  lead to recursion within oasys (i.e. /oasys/include/oasys/include/oasy..n 
+  & oasys/share/oasys/share/oa..n).
+
+- Provide more searches and feedback during build. 
+
+- Support for 64-bit creation time, sequence number, and expiration time.
+
+- Addition of dtnsource and dtnsink stress-test programs. 
+
+- A NORM convergence layer (experimental) requires the NORM protocol 
+  implementation from NRL see the installation doc 
+
+- A LTP convergence layer requires the LTPlib protocol implementation 
+  from Trinity College Dublin see the installation doc 
+
+- Added code to check if TCP Convergence Layer needs to send/receive ACKS.
+  Fix of issue related to sending bundles that are larger than the link 
+  MTU from ION to DTN2
+
+- servlib/bundling/BundleDaemon.cc::event_handlers_completed: Correct sanity checking.
+
+- Fix PrOPHET problems: dtnping does not reply & dtnd segfaults after a while
+
+- DTNPerf 2.6 release.
+
+2.6.0 (July 2008)
+-----------------
+
+- Updated the source control system to mercurial, splitting the oasys
+  library into a fully separate package and changing the configuration,
+  build, and packaging accordingly.
+
+- Added a session layer with a publish / subscribe based interface and
+  multicast capabilities as well as the ability to order bundles by
+  sequence identifier and express that prior transmissions should be
+  proactively deleted in-network.
+
+- Updated DTLSR to support the session layer and route advertisements
+  as well as miscellaneous other bug fixes.
+
+- Restructured the core forwarding path and the router <-> convergence
+  layer interface, getting rid of the BUSY state management and
+  (hopefully) improving stability and scalability.
+
+- Changed the contract between the core forwarding logic and the
+  router implementation to give the router better control over when
+  bundles are deleted from the system.
+
+- Changed the Bundle class internals to make all member variables
+  private, adding accessor functions for manipulation and state
+  retrieval and improve efficiency in internal storage.
+
+- Added additional API function accesses through the SWIG interface and
+  parse status reports that are returned to the app. Also removed the
+  limitation on the size of bundles that can be returned in memory.
+
+- Added a fix so that bundles aren't delivered twice to the same
+  registration and changes to the core forwarding path to support
+  modified topologies.
+
+- Incorporated patches from BBN to fix bugs during shutdown, more
+  efficient comparisons, memory leak and dangling pointer fixes, and
+  modified handling of duplicate bundles.
+
+- Fixed a bunch of bugs in the dtntunnel application.
+
+- Incorporated various updates to the prophet implementation from Jeff
+  Wilson.
+
+- Various other minor updates and bugfixes including Mac OS X 10.5
+  (Leopard) compatibility.
+
+
+2.5.0 (October 2007)
+-------------------
+- Integrated support for the Bundle Security Protocol blocks,
+  contributed by SPARTA.
+
+- Using SWIG, added bindings to export a version of the application
+  interface to different scripting languages, currently supporting
+  Tcl, Python, and Perl.
+
+- Implemented a polling feature in the API so applications can use
+  select() to wait for bundle arrivals on the IPC handle.
+
+- Added a dtnhttpproxy application to route http requests over a DTN
+  network.
+
+- Add a feature to the routing table to allow routes to point to
+  alternate endpoint id instead of only a next hop link.
+
+- Fixed the compilation errors in the 2.4.0 release when trying to
+  build external components. Changed the default configuration for
+  these components to be enabled by default to avoid this oversight in
+  the future.
+
+- Fixed the rpm specification file so the rpm builds work again.
+
+- Minor miscelleneous other bug fixes and features.
+
+2.4.0 (July 2007) 
+-----------------
+
+- BBN updated the protocol implementation to conform to BP spec
+  version 10, implementing bundle protocol version 5, converting most
+  fixed-length fields to SDNVs and several other changes.
+
+- BBN added support for external convergence layers and data stores,
+  matching the DTN reference architecture specification, as well as
+  support for deleting links.
+
+- BBN added support for the metadata extension block and improved
+  fragmentation handling.
+
+- Added a new router implementation called DTLSR (Delay Tolerant Link
+  State Routing) intended for environments where the inter-node
+  relationships are fairly stable, but links may go up and down.
+
+- Added support for forwarding a bundle with a wildcard destination to
+  multiple next-hops, which can be used to implement simple or
+  constrained flooding even with the static router.
+
+- Significantly improved the DTN simulator environment including
+  adding support for bandwidth and storage limits on nodes, a
+  structured output format for better post-processing of simulation
+  results, and an internal restructuring making the simulation
+  environment match the real-world environment much more closely.
+
+- Reworked the internal class used to represent bundle payloads so
+  that the router can now support fully in-memory bundles which can
+  safely contain binary data in all cases.
+
+- Jeff Wilson did a complete rewrite of the Prophet router
+  implementation.
+
+- Changed the API to include bundle creation timestamp when receiving
+  a bundle so that it's available to applications that may need it.
+
+- Added support for neighbor discovery that uses multicast dns (aka
+  Apple's Bonjour protocol). Reworked the internal structure of the
+  neighbor discovery subsystem.
+
+- Made optimizations to the table based routers (including the default
+  static router) to be more efficient when links are coming up and
+  down.
+
+- Updated the dtntunnel application to support tunnelling protocols
+  where the server side is the first to send data. Reworked command
+  line arguments to be more intuitive (and similar to ssh tunnels).
+
+- Added a dtntraceroute application that sends a single bundle, with a
+  bunch of status report flags turned on and prints out the times
+  embedded in the status reports that come back.
+
+- Modified the build environment to enable liboasys and libdtnapi to
+  be built as shared libraries, and thereby used via SWIG export to
+  other programming languages.
+
+- Resurrected the Cygwin build though it's not yet back to full
+  functionality.
+
+2.3.0 (December 2006)
+---------------------
+
+- Rewritten and documented TCP convergence layer, with support for
+  bidirectional communication over a single socket.
+
+- Default port used by TCP & UDP convergence layers is now 4556, newly
+  registered with IANA.
+
+- Improvements to the Bluetooth convergence layer (by Jeff Wilson) to
+  use the same common stream based convergence layer base class as is
+  used by TCP.
+
+- Refactored bundle protocol handling code into separate block
+  processing modules allowing for easier integration of security and
+  other extension blocks.
+
+- Integrated full support for extension blocks.
+
+- External router interface (by MITRE) using XML to communicate
+  between the router and the daemon.
+
+- Initial support for a neighborhood discovery mechanism (by Jeff
+  Wilson) using either UDP multicast/broadcast or Bluetooth's builtin
+  service discovery protocols.
+
+- Major enhancements to the Prophet router implementation (by Jeff
+  Wilson).
+
+- Added dtntunnel and dtncat applications. Reworked and enhanced the
+  dtnping application.
+
+- Modified the core for 64-bit compatibility.
+
+- Various stability and performance improvements.
+
+- Resurrection of the dtnsim simulator (by Seguti Gutierrez-Nolasco)
+  for simple bundle transmission.
+
+- Switched most of the code from the Intel Open Source License to the
+  Apache License.
+
+2.2.0 (March 2006)
+------------------
+
+- Various changes for conformance with version 4 of the bundle
+  protocol as specified in the Bundle Protocol Internet Draft, as
+  released on November 2005.
+
+- Initial implementation of custody transfer, including
+  flexible per-route timing specifications for retransmissions.
+
+- Initial implementation of a Bluetooth convergence layer from Jeff
+  Wilson <Jeff_Wilson@baylor.edu>.
+
+- Added support for the ARM architecture, gcc 4.0, and BerkeleyDB 4.4.
+
+- Added support for a file system based persistent storage
+  implementation as an alternative to Berkeley DB.
+
+- Many minor changes to improve stability and robustness of the code,
+  largely due to an improved testing infrastructure including several
+  tcl based system tests.
+
+- Miscellaneous other improvements including: a persistent
+  ForwardingLog for each bundle to maintain the history of where (and
+  when) the bundle was sent to peers, restored support for reactive
+  fragmentation, a NullConvergenceLayer and other testing hooks, and
+  some scalability improvements.
+
+2.1.99 (December 2005)
+----------------------
+
+- Widespread changes for conformance to the latest version of the
+  bundle protocol specification document including replacing the
+  region/admin syntax and BundleTuple class with a new EndpointID
+  class that is a standard URI, and replacing fixed-length values in
+  the protocol with SDNVs.
+  
+  ** NOTE: Due to time constraints, this task was not completed, so
+     this release does not include the full bundle spec support,
+     though the next one will.
+
+- Completed implementation of expiration timers for both bundles and
+  application registrations, as specified by the protocol document and
+  architecture specification.
+
+- Removed the use of AddressFamily classes from the configuration of
+  the Interface and Link classes, moving the address specification
+  into the convergence layer specifically.
+
+- Faster and more robust configure scripts, including support for
+  configuring a build directory that's different from the source
+  directory. Improved build system so make -j works to build in
+  parallel. Add support for the gcc-4.0 series of compilers.
+
+- Other minor cleanup of Bundle class field names and associated
+  types to match the protocol document more clearly.
+
+- Rework some of the RPC API to have the daemon construct an
+  appropriate endpoint id (in a scheme-specific manner).
+
+- Significant rework of the control flow of Bundles through the
+  system, including the state machine for Links, a reduction in the
+  number of BundleList queues around the code, and an overall
+  simplification of the control flow.
+
+- Update the TCP and UDP convergence layers: removed fixed-width
+  length fields from TCP; added pipelining so multiple bundles can be
+  "in-flight" on a single TCP connection; removed all the framing
+  overhead from UDP by simply sending a bundle per UDP datagram.
+
+- Support added for Cygwin as well as Apple OS X.
+
+2.1.1 (March 2005)
+------------------
+- Patch to configure script to fix build problems on Apple OS X due to
+  a conflict with a system include file (demmer).
+
+- Bug fix in oasys/io/NetUtils.cc so getaddrinfo works properly on OS
+  X (or generally any IPv6 enabled system).
+
+- Minor updates to the manual and tutorials (jra).
+
+2.1.0 (March 2005)
+------------------
+- Major restructuring of the configuration and build process to use
+  autoconf to generate configure specifications
+
+- Additional ports to solaris, cygwin, MacOS X, and FreeBSD, as well
+  as linux on ARM (sharp zaurus) both cross-compiled and native.
+
+- Major change to the BundleRouter interface to remove the "delayed
+  effect" problems of the action list interface. Now all operations
+  are immediately enacted by a BundleActions class.
+
+- Simplify the syntax for the link and interface commands to no longer
+  require a full bundle tuple, but instead just the admin portion.
+  This avoids the confusion in that the region portion was always
+  ignored.
+
+- Reorganization of the test directories in both oasys and DTN2,
+  including the introduction of a unit testing framework in oasys and
+  the conversion of some tests to the new framework.
+
+- Added framework for link-specific option parsing for the convergence
+  layers.
+
+- New version of the TCP convergence layer protocol, to be formally
+  specified further in an internet draft. Addition of an idle time
+  negotiation to close idle connections. Initial work on a feature for
+  receiver-initiated connection to be used to traverse NAT routers.
+
+- New version of the UDP convergence layer protocol that tightens up
+  the protocoll and makes more sense divergent from the tcp one.
+
+- Change the bundling protocol implementation to use NTP timestamps as
+  mandated by the bundling protocol internet draft.
+
+- Initial work on integrating the dtnsim simulation environment with
+  the core of the daemon.
+
+- Many other miscellaneous small changes and bug fixes.
+
+
+2.0.2 (December 2004)
+---------------------
+- (very minor) change to enable Berkeley DB 4.3 usage
+
+2.0.1 (December 2004):
+---------------------
+
+- First public release of the DTN2 code: stable design and overall
+  code structure, though still numerous features left to be
+  implemented.
+
+- Features include:
+
+  - conformance to the IETF draft Bundle Protocol specification version 3
+
+  - functional implementation of a TCP convergence layer and address
+    capabilities amenable to internet-connected hosts
+
+  - static bundle router implementation
+
+  - proactive and reactive fragmentation
+
+  - flexible storage framework adaptable to Berkeley DB, mysql, or
+    postgresql underlying implementations

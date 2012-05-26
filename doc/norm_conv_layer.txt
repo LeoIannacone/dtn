@@ -1,0 +1,266 @@
+
+NACK-Oriented Reliable Multicast (NORM) Convergence Layer
+---------------------------------------------------------
+
+**This code is experimental and under active development.
+
+Please direct general questions and comments to the DTN Users list
+http://mailman.dtnrg.org/mailman/listinfo/dtn-users/
+
+
+Requirements
+------------
+
+NORM libraries from the Naval Research Lab
+
+   - Download norm-nightlybuild.tgz from
+     http://downloads.pf.itd.nrl.navy.mil/norm/
+     (tested with version 1.4b4)
+
+   - Download protolib-nightlybuild.tgz from
+     http://downloads.pf.itd.nrl.navy.mil/protolib/
+
+   - Unpack the norm code.  cd into the norm top-level directory
+     and unpack the protolib code there.
+
+   - For linux, cd into the unix directory and type
+     make -f Makefile.linux
+     make -f Makefile.linux libnorm.a
+
+   - Copy libnorm.a and ../protolib/unix/libProtokit.a to
+     /usr/lib or /usr/local/lib
+ 
+   - Copy ../common/normApi.h to /usr/include or /usr/local/include
+
+Installation
+------------
+
+Configure DTN2 using '--with-norm' and (re)compile.
+
+Add NORM links to dtn.conf, for example:
+   link add norm_link remote_host:4557 ALWAYSON norm
+
+Additional link parameters are documented below.
+
+Common Configurations
+---------------------
+
+Here are some basic examples to get you started.  The full list of link
+parameters are summarized in the next section.
+
+Assume DTN nodes A, B, and C can communicate over an IP network.
+
+EID           IPv4 Address
+dtn://node_a  10.1.101.1
+dtn://node_b  10.1.102.1
+dtn://node_c  10.1.103.1
+dtn://node_d  10.1.104.1
+
+Point-to-point link A <-> B
+
+Below are the "link add" directives for an always-on unicast link between
+nodes A and B.  Congestion control is enabled (cc) with a maximum tx rate
+of 230Kbps.  "ack" places the remote node in the acking_list; positive
+acknowledgment is expected after zero of more nack-based repair cycles.
+"ack" may reduce the number of flush messages.
+
+Node A configuration
+    link add link_to_b 10.1.102.1:4557 ALWAYSON norm remote_eid=dtn://node_b cc ack rate=230000
+Node B configuration
+    link add link_to_a 10.1.101.1:4557 ALWAYSON norm remote_eid=dtn://node_a cc ack rate=230000
+
+One-to-many multicast A -> B,C,D
+
+For a one-to-many multicast link, use "link add" on the node sourcing data and
+use "interface add" on the sink nodes.  The Node A "acking_list" requests postive
+acknowledgments from Nodes B and C (after zero or more nack-based repair
+cycles).  Delivery to Node D may not succeeed because it's not in the acking_list.
+"nodeid" might be needed for senders and/or receivers when nodes are multi-homed.
+
+Node A configuration
+    link add link_to_bc 239.255.0.1:4558 ALWAYSON norm multicast_interface=eth0 remote_eid=dtn://group \
+    cc rate=230000 acking_list=10.1.102.1,10.1.103.1
+Node B configuration
+    interface add norm0 norm multicast_interface=eth0 group_addr=239.255.0.1 nodeid=10.1.102.1
+Node C configuration
+    interface add norm0 norm multicast_interface=eth0 group_addr=239.255.0.1 nodeid=10.1.103.1
+Node D configuration
+    interface add norm0 norm multicast_interface=eth0 group_addr=239.255.0.1 nodeid=10.1.104.1
+
+Many-to-many
+
+For a many-to-many multicast link, use "link add" on all the nodes sourcing data.
+Below, all nodes can send to and receive from the multicast group.  Note the
+acking_list is adjusted accordingly in each directive.
+
+Node A configuration
+    link add link_to_bc 239.255.0.1:4558 ALWAYSON norm multicast_interface=eth0 remote_eid=dtn://group \
+    cc rate=230000 acking_list=10.1.102.1,10.1.103.1,10.1.104.1
+Node B configuration
+    link add link_to_bc 239.255.0.1:4558 ALWAYSON norm multicast_interface=eth0 remote_eid=dtn://group \
+    cc rate=230000 acking_list=10.1.101.1,10.1.103.1,10.1.104.1
+Node C configuration
+    link add link_to_bc 239.255.0.1:4558 ALWAYSON norm multicast_interface=eth0 remote_eid=dtn://group \
+    cc rate=230000 acking_list=10.1.101.1,10.1.102.1,10.1.104.1
+Node D configuration
+    link add link_to_bc 239.255.0.1:4558 ALWAYSON norm multicast_interface=eth0 remote_eid=dtn://group \
+    cc rate=230000 acking_list=10.1.101.1,10.1.102.1,10.1.103.1
+
+Link Parameters
+---------------
+
+**default settings in < >
+
+cc=<false>
+
+    Whether NORM congestion control is enabled.
+
+rate=<64000>
+
+    Rate of NORM link in bits per second (bps). If congestion control is
+    enabled (see cc) this is the maximum achievable rate.
+
+nodeid=<hostname IPv4 address>
+    Uniquely identify this node on the NORM link with an IPv4 address.
+    (Normally only needed for multi-homed nodes).
+
+segment_size=<1400>
+
+    Maximum payload size of NORM sender messages in bytes (not incl.
+    NORM message header fields).
+
+local_port=<4558>
+
+    (NORM interfaces only)
+    Local UDP port to listen on for incoming multicast traffic.
+
+remote_addr
+
+    Remote NORM link IP address (not used -- normally acquired from the
+    "link add" directive)
+
+remote_port=<4557>
+
+    Remote NORM link port. (not used -- normally acquired from the "link
+    add" directive)
+
+multicast_interface
+
+    The host interface to use when working with multicast groups.
+
+group_addr
+
+    (NORM interfaces only)
+    Multicast IPv4 address to join.  For multicast links, the group address
+    is acquired from the "link add" directive.
+
+tx_robust_factor=<20>
+
+    The number of flush messages sent at the end of each transmission.
+    Flush messages are used to prompt receivers to request needed repairs.
+    With "acking_list" or "ack", periodic flush messages cease once positive
+    ack(s) are received.
+
+rx_robust_factor=<20>
+
+    The number of times a receiver will nack for repairs before giving up.
+
+tos=<0>
+
+    DSCP marking (0-64) for all bundles on a specific link
+
+acking_list
+
+    (multicast links)
+    A comma separated list of IPv4 addresses (NORM node ids) that must
+    positively ack sender-initiated flush messages (once any nack-based
+    repair process has completed).
+
+ack
+    A shorthand way of requesting positive acks from the remote end of unicast
+    links.
+
+silent=<false>
+    "silent" receivers do not originate any NORM traffic and must rely on
+    proactive FEC for repairs.
+
+ecn=<false>
+
+    Whether NORM explicit congestion notification support is enabled.
+
+object_size=<0>
+
+    Partition large DTN bundles into multiple NORM data objects for
+    transmission. With the default of zero bytes, no object partitioning
+    is performed. Setting object size to a relatively small value, e.g.
+    50000 bytes, may be useful in some contention based networks (see
+    tx_spacer). This feature is similar in concept to proactive bundle
+    fragmentation or "bundle MTU" (neither yet implemented in DTN2).
+    (see tx_spacer)
+
+tx_spacer=<0>
+
+    When combined with object_size, tx_spacer may be used to add a
+    constant pause time (ms) between successive NORM data object
+    transmissions. On contention based networks, this pause time may
+    give other nodes a chance to transmit.
+
+keepalive_intvl=<5000>
+
+    For DTN opportunistic links, keepalive_intvl is the number of
+    miliseconds between successive keepalive packets. Opportunistic
+    links are made unavailable when three remote keepalive packets are
+    missed. In addition, reliable mode links send watermarks at
+    keepalive intervals.
+
+fec_buf_size=<1048576>
+
+    The number of bytes allocated for sender calculated FEC segments and
+    repair state.
+
+block_size=<64>
+
+    The number of source symbol segments per coding block for the
+    systematic Reed-Solomon FEC code used in the NRL NORM implementation.
+
+num_parity=<16>
+
+    The maximum number of parity blocks the sender is willing to
+    calculate per coding block.
+
+auto_parity=<0>
+
+    The number of "auto-parity" messages sent at the end of each coding
+    block.
+
+backoff_factor=<0.0 for unicast; 4.0 for multicast links>
+
+    Used to scale various timeouts during the NACK repair process.
+
+group_size=<1000>
+
+    Group size is advertised to the receiver group where it is used in
+    calculating backoff timers. Due to encoding techniques in the NORM
+    header, 1000 receivers is the smallest value allowed by the NORM
+    protocol.
+
+tx_cache_size_max=<20971520>
+
+    Size of the NORM object cache (in bytes) per link.
+
+tx_cache_count_min=<8>
+
+    At at minimum, this many objects are allowed to be enqueued in the
+    NORM engine regardless of the object sizes. After the
+    tx_cache_count_min value is surpassed, cache size contraints are in
+    effect (see tx_cache_size_max).
+
+tx_cache_count_max<1024>
+
+    The maximum number of objects that may be enqueued for transmission
+    with the NORM engine assuming the total size is less that
+    tx_cache_size_max.
+
+rx_buf_size=<300000>
+
+    Size of the receive buffer (bytes) for each NORM link.

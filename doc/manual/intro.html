@@ -1,0 +1,90 @@
+<html>
+<head>
+<title> DTN2 Manual: Introduction </title>
+<link rel="stylesheet" type="text/css" href="manual.css" />
+</head>
+<body>
+<h1>Introduction </h1>
+
+<p>
+Congratulations! Welcome to the world of Disruption Tolerant
+Networking. With a little help from this manual, and the DTN2
+software, you'll soon be sending bundles to Mars and beyond.
+
+<h2> What is Disruption Tolerant Networking? </h2>
+
+<p> The protocols that govern the way computers talk on the Internet
+largely assume that there are reliable low latency connections
+between any two points on the net. But several applications where we'd
+like to get the benefits of computer networking do not conform to that
+assumption. For instance, when NASA sends an instruction to a Mars
+Rover, there are both latency (speed of light delay) and disruption
+problems (no line of sight from Earth to Mars because the rover is on
+the back side of Mars right now, or it is the weather is bad at the
+receiving station). Another example is the challenge of
+getting the benefits of the Internet to a villiage in a developing
+nation. Traditional
+telecommunications technology cannot reach it cost-effectively, but a guy
+on a motorcycle can visit twenty such villages in a week much more cheaply
+than one could build a network to those twenty villages. 
+
+<p>The Disruption Tolerant Networking (DTN) family of specifications
+and protocols lay out an architecture and mechanism to keep data
+moving even in the face of the difficulties these new environments
+present. For more information on DTN, visit the <a
+href="http://dtnrg.org">DTN Research Group</a> web page. In
+particular, download and read <a
+href="http://dtnrg.org/tutorials/warthman-1.1.pdf">Forrest Warthman's
+tutorial</a> for a great introduction to all the concepts and
+terms in the DTN world.  
+
+<h2> What is DTN2? </h2>
+
+<p> DTN2 is the name for a reference implementation of the DTN
+protocols.  It is designed as an experimental platform where
+researchers can validate the protocol designs, and do experiments to
+show that the DTN protocols are working as expected. For more
+information about DTN2's architecture and role as a platform for
+experimentation, see <a
+href="http://www.cs.berkeley.edu/~demmer/papers/dtn-irb-tr-04-020.pdf">this
+paper</a> by Michael Demmer and others.
+
+<p> Though DTN2 appeals to researchers, it is also intended to be
+high-quality, production-grade code ready for use in real world
+deployments. It has already been deployed to Cambodia and India
+as part of the <a href="http://tier.cs.berkeley.edu">TIER,
+Project</a>, to Swedish Lapland  as part of the 
+<a href="http://www.n4c.eu/">N4C</a> project, and we
+hope to see it deployed to many other environments that need to
+benefits of a DTN.
+
+<h2> What protocols does DTN2 implement? </h2>
+
+<p>
+DTN2 primarily implements The DTN Bundle Protocol defined in the experimental 
+specification <a href="http://www.rfc-editor.org/rfc/rfc5050.txt">RFC 5050</a>. 
+An RFC 5050-based DTN transmits data in the form of <i>bundles</i> that may be 
+much larger 
+than typical packets transmitted on IP networks.  DTN2 also optionally supports 
+the Bundle Security Protocol to provide authentication and/or integrity 
+protection for transmitted bundles if required by the application.  Bundles 
+can be transmitted over either over (IP) transport layers or various link layers
+including Ethernet and Bluetooth.  DTN2 implements a number of <i>convergence
+layers</i> that interface between the Bundle Protocol and the transports.  DTN2
+also provides a number of routing mechanisms to direct the forwarding of 
+bundles to their intended destinations including a <i>static</i> routing
+scheme based on pre-configured routes and <i>epidemic</i> routing which 
+floods bundles to any node it encounters.
+
+<h2> What happened to DTN1? </h2>
+
+<p>
+We have ceased working on DTN1 in favor of DTN2, which has a
+significantly improved architecture for experimentation. DTN1 is
+still available from the <a href="http://www.dtnrg.org/wiki/Code">DTN Research
+Group</a> home page. You really should be using DTN2 for
+any new experiments or deployments.
+ 
+</body>
+</html>
+

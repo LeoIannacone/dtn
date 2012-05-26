@@ -1,0 +1,111 @@
+-TCA Readme
+
+These are some basic configuration and usage notes about the TCA
+(Tetherless Computing Architecture) implementation. For a higher-level
+view of TCA, see the documentation at www.mindstream.watsmore.net
+
+
+1 Configuration
+
+The following are important TCA directives in dtn.conf :
+
+# There are two types of tca nodes: routers and gateways:
+route set type [ tca_router | tca_gateway]
+
+# A tca endpointid uses the tca scheme, of the form: "tca://guid/app"
+route local_eid "tca://hail"
+
+# All tca nodes must have a tcp0 contact interface
+interface add tcp0 tcp local_addr=192.168.1.6 local_port=5000
+
+# All tca_routers must have a default route toward a gateway as follows:
+# Note that tca_gateways must *not* have a default route
+link add default hurricane.cs.uwaterloo.ca:5000 ONDEMAND tcp
+route add tca://* default
+
+
+2 Using TCA
+
+A new mobile endpoint (hail/app) can register as follows:
+dtnsend -s tca://hail/app -d tca://registry -t m -p "register"
+
+Once hail has registered, another node (windstorm) can send it a
+bundle like this: 
+
+dtnsend -s tca://windstorm/test_app -d
+tca://hail/test_app -t m -p "windstorm says hi"
+
+
+3 Unimplemented Features, Known Bugs, and Limitations
+
+- Limitation. OpenDHT nodes are hard-coded at the moment. There should
+be a file of nodes to use instead.
+
+- Limitation. OpenDHT nodes are tested on startup and only those nodes
+that are responsive are kept. This process should be repeated
+periodically to refresh the list of "live" OpenDHT nodes.
+
+- Limitation. Entries in the DHT are set to time out at 1 week, the
+maximum TTL allowed by OpenDHT. This value is hard-coded.
+
+- Unimplemented. The rules for registration lifetime are not quite
+settled. When a gateway receives a bundle for an unregistered node
+(perhaps never registered, perhaps previously registered but expired)
+the bundle is kept in the gateway's queue until the bundle times out.
+
+- Bug. Undeliverable control bundles are not deleted. They remain in the
+pending bundle list until timeout. This is an error but it affects performance,
+not correctness.
+
+4 Modified Files
+
+The key new classes in the implementation are TcaController and TcaRouter.
+
+This is a complete list of files that were modified or added to DTN
+as part of the TCA implementation:
+
+servlib/naming/TCAScheme.* 
+New singleton class, borrowed heavily from DTNScheme.
+
+servlib/naming/SchemeTable.cc
+Added an instance of TCAScheme to the scheme table.
+
+servlib/routing/BundleRouter.cc
+Added TcaRouter instantiations to factory method.
+
+servlib/routing/TableBasedRouter.h
+Made some bundle handler functions virtual.
+
+apps/tca_admin
+New directory for tca controller app.
+
+apps/tca_admin/tca_lib/*
+Third-party tools.
+
+apps/tca_admin/TcaRegistry.*
+New class for accessing the TCA registry.
+
+apps/tca_admin/TcaEndpointID.*
+New class for manipulating TCA endpoint ids.
+
+apps/tca_admin/TcaController.*
+Main implementation of TCA Control logic at the control layer.
+
+apps/tca_admin/tca_admin.cc
+The TCA controller's command-line parsing and main() function.
+
+/servlib/routing/TcaEndpointID.*
+New class for manipulating TCA endpoint ids, subclassed from EndpointID.
+
+/servlib/routing/TcaControlBundle.*
+New class for manipulating TCA control bundles.
+
+/servlib/routing/TcaRouter.*
+Main implementation of TCA Control logic at the bundle routing layer.
+
+servlib/Makefile
+Modified to include TcaRouter and related sources
+
+apps/Makefile
+Modified to include tca_admin app and related sources
+
